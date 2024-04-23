@@ -41,7 +41,6 @@ cluster = model.predict(new_feature_vector)
 probability = data.filter(data.prediction == cluster).filter(data["Vehicle Color"] == "BLACK").count() / data.filter(data.prediction == cluster).count()
 print(f"Probability of getting a ticket for a Black vehicle at the given location: {probability}")
 
-
 # Question 2: Recommend a parking location near Lincoln Center
 lincoln_center_data = data.filter(col("Street Code1").between(5880, 11110))  # Assuming Lincoln Center is within this range
 best_cluster = lincoln_center_data.groupBy("prediction").agg(count("*").alias("count")).orderBy("count").first()[0]
