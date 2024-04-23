@@ -28,14 +28,18 @@ df = df.withColumn("Violation Hour", concat(col("Violation Hour"), when(col("Vio
 # Group by the violation hour and count the number of tickets
 ticket_counts = df.groupBy("Violation Hour").count().orderBy("Violation Hour")
 
-# Show the ticket counts for each hour
-ticket_counts.show(24)
+# Sort the ticket counts by count in descending order
+sorted_ticket_counts = ticket_counts.orderBy(col("count").desc())
+
+# Show the top 5 hours with the most tickets
+sorted_ticket_counts.show(5)
 
 # Find the hour with the maximum number of tickets
-max_tickets_row = ticket_counts.orderBy(col("count").desc()).first()
+max_tickets_row = sorted_ticket_counts.first()
 if max_tickets_row is not None:
     max_tickets_hour = max_tickets_row["Violation Hour"]
-    print("Hour with the most tickets issued:", max_tickets_hour)
+    max_tickets_count = max_tickets_row["count"]
+    print("Hour with the most tickets issued: {} ({}A tickets)".format(max_tickets_hour[:-1], max_tickets_count))
 else:
     print("No data found.")
 
