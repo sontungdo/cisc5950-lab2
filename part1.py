@@ -7,12 +7,17 @@ spark = SparkSession.builder \
     .appName("ParkingTicketAnalysis") \
     .getOrCreate()
 
-# Read the CSV data from stdin
+# Read the CSV data from stdin locally
 # input_data = sys.stdin.read().split("\n")
 # rdd = spark.sparkContext.parallelize(input_data)
 # df = spark.read.csv(rdd, header=True, inferSchema=True, sep=",", quote='"', escape='"')
+
+# Read the CSV data in the cluster
 input_file = sys.argv[1]
 df = spark.read.csv(input_file, header=True, inferSchema=True, sep=",", quote='"', escape='"')
+
+# Filter out null values in the "Violation Time" column
+df = df.filter(col("Violation Time").isNotNull())
 
 # Extract the hour from the Violation Time column
 df = df.withColumn("Violation Hour", substring(col("Violation Time"), 1, 2))
